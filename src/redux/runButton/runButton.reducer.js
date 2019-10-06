@@ -7,7 +7,6 @@ const START_Y = 10;
 var visited = Array.from({ length: N_COLS }, () =>
   Array.from({ length: N_ROWS }, () => false)
 );
-//visited[START_X][START_Y] = true;
 
 const INITIAL_STATE = {
   isRunning: false,

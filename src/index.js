@@ -5,8 +5,9 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import rootReducer from "./redux/rootReducer";
 import logger from "redux-logger";
+import timerMiddleware from "redux-timer";
 
-const middlewares = [];
+const middlewares = [timerMiddleware];
 if (process.env.NODE_ENV === "development") {
   middlewares.push(logger);
 }

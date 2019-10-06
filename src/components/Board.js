@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import "./Board.css";
 import Cell from "./Cell";
+import key from "weak-key";
 
 const CELL_SIZE = 20;
 const WIDTH = 800;
@@ -29,21 +30,21 @@ class Board extends React.Component {
         <Cell
           x={START_X * CELL_SIZE}
           y={START_Y * CELL_SIZE}
-          key={START_X * N_ROWS + START_Y * N_COLS}
+          key="START_CELL"
           color="white"
         ></Cell>
         <Cell
           x={END_X * CELL_SIZE}
           y={END_Y * CELL_SIZE}
           color="green"
-          key={END_X * N_ROWS + END_Y * N_COLS}
+          key="END_CELL"
         ></Cell>
         {pathCells.length ? (
           pathCells.map(pathCell => (
             <Cell
               x={pathCell.x * CELL_SIZE}
               y={pathCell.y * CELL_SIZE}
-              key={pathCell.x * N_ROWS + pathCell.y * N_COLS}
+              key={key(pathCell)}
             />
           ))
         ) : (

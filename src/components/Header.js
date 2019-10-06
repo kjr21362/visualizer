@@ -2,9 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import { toggleRunButton } from "../redux/runButton/runButton.action";
+import { startTimer } from "../redux/timer/timer.actions";
 
-const Header = ({ toggleRunButton }) => {
+const Header = ({ dispatch }) => {
   const options = ["DFS", "BFS"];
 
   return (
@@ -13,18 +13,21 @@ const Header = ({ toggleRunButton }) => {
         Visualizer
       </a>
       <Dropdown options={options} />
-      <button className="ui primary button" onClick={toggleRunButton}>
+      <button
+        className="ui primary button"
+        onClick={() => {
+          dispatch(startTimer());
+        }}
+      >
         Run!
       </button>
     </div>
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  toggleRunButton: () => dispatch(toggleRunButton())
-});
+//const mapDispatchToProps = dispatch => ({
+//  toggleRunButton: () => dispatch(toggleRunButton()),
+//  runTimer: () => dispatch(runTimer())
+//});
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(Header);
+export default connect()(Header);

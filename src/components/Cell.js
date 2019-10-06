@@ -5,10 +5,11 @@ const CELL_SIZE = 20;
 
 class Cell extends React.Component {
   render() {
-    const { x, y, color } = this.props;
+    const { x, y, color, key } = this.props;
     return (
       <div
         className="Cell"
+        key={key}
         style={{
           left: `${x + 1}px`,
           top: `${y + 1}px`,
