@@ -11,8 +11,6 @@ const START_X = 4;
 const START_Y = 10;
 const END_X = 37;
 const END_Y = 10;
-const N_ROWS = 25;
-const N_COLS = 40;
 
 class Board extends React.Component {
   render() {

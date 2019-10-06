@@ -46,9 +46,15 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       const neighbors = addCellsToPath(state.cells);
       return {
         ...state,
-        isRunning: !state.isRunning,
+        isRunning: true,
         cells: state.cells.concat(neighbors),
         visited: visited.map(row => [...row])
+      };
+
+    case runButtonTypes.STOP_GAME:
+      return {
+        ...state,
+        isRunning: false
       };
     default:
       return state;
