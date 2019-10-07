@@ -13,6 +13,6 @@ export const startTimer = () => ({
   payload: {
     name: "timer",
     action: runButtonTypes.RUN_GAME,
-    interval: 500
+    interval: 100
   }
 });

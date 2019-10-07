@@ -14,7 +14,7 @@ const END_Y = 10;
 
 class Board extends React.Component {
   render() {
-    const { pathCells } = this.props;
+    const { searchCells, path } = this.props;
 
     return (
       <div
@@ -37,12 +37,24 @@ class Board extends React.Component {
           color="green"
           key="END_CELL"
         ></Cell>
-        {pathCells.length ? (
-          pathCells.map(pathCell => (
+        {searchCells.length ? (
+          searchCells.map(pathCell => (
             <Cell
               x={pathCell.x * CELL_SIZE}
               y={pathCell.y * CELL_SIZE}
               key={key(pathCell)}
+            />
+          ))
+        ) : (
+          <span></span>
+        )}
+        {path.length ? (
+          path.map(cell => (
+            <Cell
+              x={cell.x * CELL_SIZE}
+              y={cell.y * CELL_SIZE}
+              key={key(cell)}
+              color="green"
             />
           ))
         ) : (
@@ -54,8 +66,8 @@ class Board extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  pathCells: state.runButton.cells,
-  isRunning: state.isRunning
+  searchCells: state.runButton.cells,
+  path: state.runButton.path
 });
 
 export default connect(mapStateToProps)(Board);
