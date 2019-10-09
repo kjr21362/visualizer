@@ -4,8 +4,8 @@ const N_ROWS = 25;
 const N_COLS = 40;
 const START_X = 4;
 const START_Y = 10;
-const END_X = 37;
-const END_Y = 10;
+const END_X = 24;
+const END_Y = 17;
 var init_visited = Array.from({ length: N_COLS }, () =>
   Array.from({ length: N_ROWS }, () => false)
 );
@@ -13,6 +13,7 @@ var init_visited = Array.from({ length: N_COLS }, () =>
 var init_path = [];
 
 const INITIAL_STATE = {
+  target: { x: END_X, y: END_Y },
   isRunning: false,
   searchDone: false,
   foundTarget: false,
@@ -29,7 +30,7 @@ const addCellsToPath = state => {
     { x: 1, y: 0, from: "LEFT" },
     { x: -1, y: 0, from: "RIGHT" }
   ];
-  const { cells, visited } = state;
+  const { cells, visited, target } = state;
   for (var i = 0; i < cells.length; i++) {
     var cell = cells[i];
 
@@ -42,7 +43,7 @@ const addCellsToPath = state => {
         if (!visited[ny][nx]) {
           visited[ny][nx] = true;
           neighbors.push({ x: nx, y: ny, from: direc });
-          if (nx === END_X && ny === END_Y) {
+          if (nx === target.x && ny === target.y) {
             return [neighbors, true];
           }
         }
@@ -53,8 +54,8 @@ const addCellsToPath = state => {
   return [neighbors, false];
 };
 
-const generatePath = cells => {
-  var current = { x: END_X, y: END_Y, from: "END" };
+const generatePath = (cells, target) => {
+  var current = { x: target.x, y: target.y, from: "END" };
   var path = [];
   while (current.x !== START_X || current.y !== START_Y) {
     path.push({ x: current.x, y: current.y, from: current.from });
@@ -91,6 +92,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
     case runButtonTypes.RUN_GAME:
       const [neighbors, foundTarget] = addCellsToPath(state);
       const currentCells = state.cells.concat(neighbors);
+      const { target } = state;
 
       var toBeReturned = {
         ...state,
@@ -106,7 +108,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         toBeReturned.searchDone = true;
         if (foundTarget) {
           toBeReturned.foundTarget = true;
-          var currentPath = generatePath(currentCells);
+          var currentPath = generatePath(currentCells, target);
           toBeReturned.path = state.path.concat(currentPath);
         }
       }
@@ -125,6 +127,17 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         cells: [{ x: START_X, y: START_Y }],
         path: init_path.map(cell => cell),
         visited: init_visited.map(row => [...row])
+      };
+    case runButtonTypes.DRAG_TARGET:
+      var newx = action.payload.x;
+      var newy = action.payload.y;
+      if (newx < 0) newx = 0;
+      if (newx >= N_COLS) newx = N_COLS - 1;
+      if (newy < 0) newy = 0;
+      if (newy >= N_ROWS) newy = N_ROWS - 1;
+      return {
+        ...state,
+        target: { x: newx, y: newy }
       };
     default:
       return state;

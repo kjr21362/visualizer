@@ -11,3 +11,8 @@ export const toggleStopButton = () => ({
 export const toggleClearButton = () => ({
   type: runButtonTypes.CLEAR_GAME
 });
+
+export const dragTarget = newPos => ({
+  type: runButtonTypes.DRAG_TARGET,
+  payload: newPos
+});
