@@ -3,17 +3,18 @@ import { connect } from "react-redux";
 import "./Board.css";
 import Cell from "./Cell";
 import key from "weak-key";
+import constants from "../utils/constants";
 import {
   dragTarget,
   addObstacle,
   toggleAddintObstacleState
 } from "../redux/runButton/runButton.action";
 
-const CELL_SIZE = 20;
-const WIDTH = 800;
-const HEIGHT = 500;
-const START_X = 4;
-const START_Y = 10;
+const CELL_SIZE = constants.CELL_SIZE;
+const WIDTH = constants.WIDTH;
+const HEIGHT = constants.HEIGHT;
+const START_X = constants.START_X;
+const START_Y = constants.START_Y;
 
 class Board extends React.Component {
   getBoardCoords = e => {

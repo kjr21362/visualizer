@@ -29,3 +29,8 @@ export const addObstacle = newObstacle => ({
 export const clearObstacles = () => ({
   type: runButtonTypes.CLEAR_OBSTACLES
 });
+
+export const selectSearchAlgorithm = algorithm => ({
+  type: runButtonTypes.SELECT_SEARCH_ALGORITHM,
+  payload: algorithm
+});

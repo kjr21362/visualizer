@@ -7,12 +7,19 @@ import {
   toggleStopButton,
   toggleClearButton,
   toggleAddintObstacleState,
-  clearObstacles
+  clearObstacles,
+  selectSearchAlgorithm
 } from "../redux/runButton/runButton.action";
+import constants from "../utils/constants";
+
+const options = constants.SEARCH_OPTIONS;
 
 class Header extends React.Component {
+  _onSelect(option) {
+    //console.log(option.label);
+    this.props.dispatch(selectSearchAlgorithm(option.label));
+  }
   render() {
-    const options = ["DFS", "BFS"];
     const { isRunning, dispatch, searchDone, isAddingObstacles } = this.props;
     if (searchDone) {
       dispatchWhenStop(this.props);
@@ -22,7 +29,13 @@ class Header extends React.Component {
         <a href="/" className="item">
           Visualizer
         </a>
-        <Dropdown options={options} />
+        <Dropdown
+          options={options}
+          value={options[0]}
+          onChange={option => {
+            this.props.dispatch(selectSearchAlgorithm(option.label));
+          }}
+        />
         <button
           className="ui primary button"
           onClick={() => {

@@ -1,7 +1,8 @@
 import React from "react";
 import "./Cell.css";
+import constants from "../utils/constants";
 
-const CELL_SIZE = 20;
+const CELL_SIZE = constants.CELL_SIZE;
 
 class Cell extends React.Component {
   render() {

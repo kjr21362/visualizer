@@ -1,11 +1,13 @@
 import runButtonTypes from "./runButton.types";
+import { runSearchAlgorithm, generatePath } from "../../utils/utils";
+import constants from "../../utils/constants";
 
-const N_ROWS = 25;
-const N_COLS = 40;
-const START_X = 4;
-const START_Y = 10;
-const END_X = 24;
-const END_Y = 17;
+const N_ROWS = constants.N_ROWS;
+const N_COLS = constants.N_COLS;
+const START_X = constants.START_X;
+const START_Y = constants.START_Y;
+const END_X = constants.END_X;
+const END_Y = constants.END_Y;
 var init_visited = Array.from({ length: N_COLS }, () =>
   Array.from({ length: N_ROWS }, () => false)
 );
@@ -20,6 +22,7 @@ const INITIAL_STATE = {
   isRunning: false,
   searchDone: false,
   foundTarget: false,
+  searchAlgorithm: "BFS",
   cells: [{ x: START_X, y: START_Y, from: "START" }],
   path: init_path.map(cell => cell),
   isAddingObstacles: false,
@@ -27,75 +30,11 @@ const INITIAL_STATE = {
   visited: init_visited.map(row => [...row])
 };
 
-const addCellsToPath = state => {
-  var neighbors = [];
-  const offsets = [
-    { x: 0, y: 1, from: "UP" },
-    { x: 0, y: -1, from: "DOWN" },
-    { x: 1, y: 0, from: "LEFT" },
-    { x: -1, y: 0, from: "RIGHT" }
-  ];
-  const { cells, visited, target, obstacles } = state;
-  for (var i = 0; i < cells.length; i++) {
-    var cell = cells[i];
-
-    for (var j = 0; j < offsets.length; j++) {
-      var offset = offsets[j];
-      var nx = cell.x + offset.x;
-      var ny = cell.y + offset.y;
-      var direc = offset.from;
-      if (nx >= 0 && ny >= 0 && ny < N_ROWS && nx < N_COLS) {
-        if (!visited[ny][nx] && !obstacles[ny][nx]) {
-          visited[ny][nx] = true;
-          neighbors.push({ x: nx, y: ny, from: direc });
-          if (nx === target.x && ny === target.y) {
-            return [neighbors, true];
-          }
-        }
-      }
-    }
-  }
-
-  return [neighbors, false];
-};
-
-const generatePath = (cells, target) => {
-  var current = { x: target.x, y: target.y, from: "END" };
-  var path = [];
-  while (current.x !== START_X || current.y !== START_Y) {
-    path.push({ x: current.x, y: current.y, from: current.from });
-    switch (current.from) {
-      case "UP":
-        current.y = current.y - 1;
-        break;
-      case "DOWN":
-        current.y = current.y + 1;
-        break;
-      case "LEFT":
-        current.x = current.x - 1;
-        break;
-      case "RIGHT":
-        current.x = current.x + 1;
-        break;
-      default:
-        break;
-    }
-    for (var i = 0; i < cells.length; i++) {
-      var cell = cells[i];
-      if (cell.x === current.x && cell.y === current.y) {
-        current.from = cell.from;
-        break;
-      }
-    }
-  }
-  path.push({ x: START_X, y: START_Y, from: "START" });
-  return path;
-};
-
 const runButtonReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case runButtonTypes.RUN_GAME:
-      const [neighbors, foundTarget] = addCellsToPath(state);
+      //const [neighbors, foundTarget] = BFS(state);
+      const [neighbors, foundTarget] = runSearchAlgorithm(state);
       const currentCells = state.cells.concat(neighbors);
       const { target } = state;
 
@@ -105,6 +44,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         searchDone: false,
         foundTarget: false,
         isAddingObstacles: false,
+        searchAlgorithm: state.searchAlgorithm,
         path: state.path,
         cells: currentCells,
         visited: state.visited.map(row => [...row])
@@ -168,6 +108,11 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         obstacles: init_obstacles.map(row => [...row])
+      };
+    case runButtonTypes.SELECT_SEARCH_ALGORITHM:
+      return {
+        ...state,
+        searchAlgorithm: action.payload
       };
     default:
       return state;
