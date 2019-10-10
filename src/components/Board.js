@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import "./Board.css";
 import Cell from "./Cell";
 import key from "weak-key";
-import { dragTarget } from "../redux/runButton/runButton.action";
+import {
+  dragTarget,
+  addObstacle,
+  toggleAddintObstacleState
+} from "../redux/runButton/runButton.action";
 
 const CELL_SIZE = 20;
 const WIDTH = 800;
@@ -12,9 +16,7 @@ const START_X = 4;
 const START_Y = 10;
 
 class Board extends React.Component {
-  updateTargetOnDrag = e => {
-    const { dragTarget } = this.props;
-
+  getBoardCoords = e => {
     var rect = this.boardRef.getBoundingClientRect();
     var doc = document.documentElement;
     var offset_x = rect.left + window.pageXOffset - doc.clientLeft;
@@ -22,17 +24,54 @@ class Board extends React.Component {
 
     var x = e.clientX - offset_x;
     var y = e.clientY - offset_y;
+    return [x, y];
+  };
+  updateTargetOnDrag = e => {
+    const { dragTarget } = this.props;
+    var [x, y] = this.getBoardCoords(e);
     dragTarget({
       x: Math.floor(x / CELL_SIZE),
       y: Math.floor(y / CELL_SIZE)
     });
   };
+
+  addObstacles = e => {
+    const { addObstacle, isAddingObstacles } = this.props;
+    if (isAddingObstacles) {
+      var [x, y] = this.getBoardCoords(e);
+      addObstacle({
+        x: Math.floor(x / CELL_SIZE),
+        y: Math.floor(y / CELL_SIZE)
+      });
+    }
+  };
+
   render() {
-    const { searchCells, path, target } = this.props;
+    const {
+      searchCells,
+      path,
+      target,
+      obstacles,
+      toggleAddintObstacleState,
+      isAddingObstacles
+    } = this.props;
 
     return (
       <div
+        onMouseDown={e => {
+          if (isAddingObstacles) {
+            this.addObstacles(e);
+            this.boardRef.onmousemove = this.addObstacles;
+          }
+        }}
+        onMouseUp={() => {
+          if (isAddingObstacles) {
+            this.boardRef.onmousemove = null;
+            toggleAddintObstacleState();
+          }
+        }}
         className="Board"
+        id="Board"
         ref={n => {
           this.boardRef = n;
         }}
@@ -58,13 +97,17 @@ class Board extends React.Component {
           ></Cell>
         </div>
         {searchCells.length ? (
-          searchCells.map(pathCell => (
-            <Cell
-              x={pathCell.x * CELL_SIZE}
-              y={pathCell.y * CELL_SIZE}
-              key={key(pathCell)}
-            />
-          ))
+          searchCells.map(pathCell =>
+            pathCell.x !== START_X || pathCell.y !== START_Y ? (
+              <Cell
+                x={pathCell.x * CELL_SIZE}
+                y={pathCell.y * CELL_SIZE}
+                key={key(pathCell)}
+              />
+            ) : (
+              <span></span>
+            )
+          )
         ) : (
           <span></span>
         )}
@@ -80,6 +123,19 @@ class Board extends React.Component {
         ) : (
           <span></span>
         )}
+        {obstacles.map((row, r_index) =>
+          row.map((ele, c_index) =>
+            ele ? (
+              <Cell
+                x={c_index * CELL_SIZE}
+                y={r_index * CELL_SIZE}
+                color="grey"
+              />
+            ) : (
+              <span></span>
+            )
+          )
+        )}
       </div>
     );
   }
@@ -88,19 +144,16 @@ class Board extends React.Component {
 const mapStateToProps = state => ({
   searchCells: state.runButton.cells,
   path: state.runButton.path,
-  target: state.runButton.target
+  target: state.runButton.target,
+  obstacles: state.runButton.obstacles,
+  isAddingObstacles: state.runButton.isAddingObstacles
 });
 
 const mapDispatchToProps = dispatch => ({
-  dragTarget: newPos => dispatch(dragTarget(newPos))
+  dragTarget: newPos => dispatch(dragTarget(newPos)),
+  addObstacle: newObstacle => dispatch(addObstacle(newObstacle)),
+  toggleAddintObstacleState: () => dispatch(toggleAddintObstacleState())
 });
-
-const screenCoordsToClientCoords = e => {
-  var rect = e.target.getBoundingClientRect();
-  var x = e.clientX - rect.left;
-  var y = e.clientY - rect.top;
-  return { x: Math.floor(x / CELL_SIZE), y: Math.floor(y / CELL_SIZE) };
-};
 
 export default connect(
   mapStateToProps,

@@ -5,13 +5,15 @@ import "react-dropdown/style.css";
 import { startTimer, stopTimer } from "../redux/timer/timer.actions";
 import {
   toggleStopButton,
-  toggleClearButton
+  toggleClearButton,
+  toggleAddintObstacleState,
+  clearObstacles
 } from "../redux/runButton/runButton.action";
 
 class Header extends React.Component {
   render() {
     const options = ["DFS", "BFS"];
-    const { isRunning, dispatch, searchDone } = this.props;
+    const { isRunning, dispatch, searchDone, isAddingObstacles } = this.props;
     if (searchDone) {
       dispatchWhenStop(this.props);
     }
@@ -37,6 +39,22 @@ class Header extends React.Component {
         >
           Clear!
         </button>
+        <button
+          className="ui primary button"
+          onClick={() => {
+            this.props.dispatch(toggleAddintObstacleState());
+          }}
+        >
+          {isAddingObstacles ? "Drag to add obstacles!" : "Add Obstacles!"}
+        </button>
+        <button
+          className="ui primary button"
+          onClick={() => {
+            this.props.dispatch(clearObstacles());
+          }}
+        >
+          Clear Obstacles!
+        </button>
       </div>
     );
   }
@@ -54,7 +72,8 @@ const dispatchWhenStop = props => {
 
 const mapStateToProps = state => ({
   isRunning: state.runButton.isRunning,
-  searchDone: state.runButton.searchDone
+  searchDone: state.runButton.searchDone,
+  isAddingObstacles: state.runButton.isAddingObstacles
 });
 
 export default connect(mapStateToProps)(Header);

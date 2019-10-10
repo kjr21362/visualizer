@@ -11,6 +11,9 @@ var init_visited = Array.from({ length: N_COLS }, () =>
 );
 
 var init_path = [];
+var init_obstacles = Array.from({ length: N_COLS }, () =>
+  Array.from({ length: N_ROWS }, () => false)
+);
 
 const INITIAL_STATE = {
   target: { x: END_X, y: END_Y },
@@ -19,6 +22,8 @@ const INITIAL_STATE = {
   foundTarget: false,
   cells: [{ x: START_X, y: START_Y, from: "START" }],
   path: init_path.map(cell => cell),
+  isAddingObstacles: false,
+  obstacles: init_obstacles.map(row => [...row]),
   visited: init_visited.map(row => [...row])
 };
 
@@ -30,7 +35,7 @@ const addCellsToPath = state => {
     { x: 1, y: 0, from: "LEFT" },
     { x: -1, y: 0, from: "RIGHT" }
   ];
-  const { cells, visited, target } = state;
+  const { cells, visited, target, obstacles } = state;
   for (var i = 0; i < cells.length; i++) {
     var cell = cells[i];
 
@@ -40,7 +45,7 @@ const addCellsToPath = state => {
       var ny = cell.y + offset.y;
       var direc = offset.from;
       if (nx >= 0 && ny >= 0 && ny < N_ROWS && nx < N_COLS) {
-        if (!visited[ny][nx]) {
+        if (!visited[ny][nx] && !obstacles[ny][nx]) {
           visited[ny][nx] = true;
           neighbors.push({ x: nx, y: ny, from: direc });
           if (nx === target.x && ny === target.y) {
@@ -99,6 +104,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         isRunning: true,
         searchDone: false,
         foundTarget: false,
+        isAddingObstacles: false,
         path: state.path,
         cells: currentCells,
         visited: state.visited.map(row => [...row])
@@ -138,6 +144,30 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         target: { x: newx, y: newy }
+      };
+    case runButtonTypes.ADD_OBSTACLE:
+      var newx = action.payload.x;
+      var newy = action.payload.y;
+      if (newx >= 0 && newx < N_COLS && newy >= 0 && newy <= N_ROWS) {
+        const existing = state.obstacles[newy][newx];
+        if (!existing) {
+          state.obstacles[newy][newx] = true;
+          return {
+            ...state,
+            obstacles: state.obstacles.map(row => [...row])
+          };
+        }
+        return state;
+      }
+    case runButtonTypes.TOGGLE_ADD_OBSTACLE:
+      return {
+        ...state,
+        isAddingObstacles: !state.isAddingObstacles
+      };
+    case runButtonTypes.CLEAR_OBSTACLES:
+      return {
+        ...state,
+        obstacles: init_obstacles.map(row => [...row])
       };
     default:
       return state;

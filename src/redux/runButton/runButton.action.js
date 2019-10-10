@@ -16,3 +16,16 @@ export const dragTarget = newPos => ({
   type: runButtonTypes.DRAG_TARGET,
   payload: newPos
 });
+
+export const toggleAddintObstacleState = () => ({
+  type: runButtonTypes.TOGGLE_ADD_OBSTACLE
+});
+
+export const addObstacle = newObstacle => ({
+  type: runButtonTypes.ADD_OBSTACLE,
+  payload: newObstacle
+});
+
+export const clearObstacles = () => ({
+  type: runButtonTypes.CLEAR_OBSTACLES
+});
