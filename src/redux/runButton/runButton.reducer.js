@@ -1,21 +1,30 @@
 import runButtonTypes from "./runButton.types";
-import { runSearchAlgorithm, generatePath } from "../../utils/utils";
+import { runSearchAlgorithm, generatePath, dist } from "../../utils/utils";
 import constants from "../../utils/constants";
 
-const N_ROWS = constants.N_ROWS;
-const N_COLS = constants.N_COLS;
+const N_HORIZONTAL_CELLS = constants.N_HORIZONTAL_CELLS;
+const N_VERTICAL_CELLS = constants.N_VERTICAL_CELLS;
 const START_X = constants.START_X;
 const START_Y = constants.START_Y;
 const END_X = constants.END_X;
 const END_Y = constants.END_Y;
-var init_visited = Array.from({ length: N_COLS }, () =>
-  Array.from({ length: N_ROWS }, () => false)
+var init_visited = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => false)
 );
 
 var init_path = [];
-var init_obstacles = Array.from({ length: N_COLS }, () =>
-  Array.from({ length: N_ROWS }, () => false)
+var init_obstacles = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => false)
 );
+
+var init_gScore = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => Number.POSITIVE_INFINITY)
+);
+init_gScore[START_Y][START_X] = 0;
+var init_fScore = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => Number.POSITIVE_INFINITY)
+);
+init_fScore[START_Y][START_X] = dist(START_X, START_Y);
 
 const INITIAL_STATE = {
   target: { x: END_X, y: END_Y },
@@ -23,7 +32,15 @@ const INITIAL_STATE = {
   searchDone: false,
   foundTarget: false,
   searchAlgorithm: "BFS",
-  cells: [{ x: START_X, y: START_Y, from: "START" }],
+  cells: [
+    {
+      x: START_X,
+      y: START_Y,
+      from: "START"
+    }
+  ],
+  fScore: init_fScore.map(row => [...row]),
+  gScore: init_fScore.map(row => [...row]),
   path: init_path.map(cell => cell),
   isAddingObstacles: false,
   obstacles: init_obstacles.map(row => [...row]),
@@ -66,11 +83,21 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         isRunning: false
       };
     case runButtonTypes.CLEAR_GAME:
+      const tmp_fScore = init_fScore.map(row => [...row]);
+      tmp_fScore[START_Y][START_X] = dist(START_X, START_Y, state.target);
       return {
         ...state,
         isRunning: false,
         searchDone: false,
-        cells: [{ x: START_X, y: START_Y }],
+        cells: [
+          {
+            x: START_X,
+            y: START_Y,
+            from: "START"
+          }
+        ],
+        fScore: tmp_fScore,
+        gScore: init_fScore.map(row => [...row]),
         path: init_path.map(cell => cell),
         visited: init_visited.map(row => [...row])
       };
@@ -78,9 +105,9 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       var newx = action.payload.x;
       var newy = action.payload.y;
       if (newx < 0) newx = 0;
-      if (newx >= N_COLS) newx = N_COLS - 1;
+      if (newx >= N_HORIZONTAL_CELLS) newx = N_HORIZONTAL_CELLS - 1;
       if (newy < 0) newy = 0;
-      if (newy >= N_ROWS) newy = N_ROWS - 1;
+      if (newy >= N_VERTICAL_CELLS) newy = N_VERTICAL_CELLS - 1;
       return {
         ...state,
         target: { x: newx, y: newy }
@@ -88,7 +115,12 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
     case runButtonTypes.ADD_OBSTACLE:
       var newx = action.payload.x;
       var newy = action.payload.y;
-      if (newx >= 0 && newx < N_COLS && newy >= 0 && newy <= N_ROWS) {
+      if (
+        newx >= 0 &&
+        newx < N_HORIZONTAL_CELLS &&
+        newy >= 0 &&
+        newy < N_VERTICAL_CELLS
+      ) {
         const existing = state.obstacles[newy][newx];
         if (!existing) {
           state.obstacles[newy][newx] = true;
