@@ -26,6 +26,17 @@ var init_fScore = Array.from({ length: N_VERTICAL_CELLS }, () =>
 );
 init_fScore[START_Y][START_X] = dist(START_X, START_Y);
 
+var init_dist = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => Number.POSITIVE_INFINITY)
+);
+init_dist[START_Y][START_X] = 0;
+
+var init_cameFrom = Array.from({ length: N_VERTICAL_CELLS }, () =>
+  Array.from({ length: N_HORIZONTAL_CELLS }, () => "INIT")
+);
+init_cameFrom[START_Y][START_X] = "START";
+init_cameFrom[END_Y][END_X] = "END";
+
 const INITIAL_STATE = {
   target: { x: END_X, y: END_Y },
   isRunning: false,
@@ -41,18 +52,38 @@ const INITIAL_STATE = {
   ],
   fScore: init_fScore.map(row => [...row]),
   gScore: init_fScore.map(row => [...row]),
+  openSet: [{ x: START_X, y: START_Y, from: "START" }],
+  closedSet: [],
+  cameFrom: init_cameFrom.map(row => [...row]),
+  dijkstra_dist: init_dist.map(row => [...row]),
   path: init_path.map(cell => cell),
   isAddingObstacles: false,
   obstacles: init_obstacles.map(row => [...row]),
-  visited: init_visited.map(row => [...row])
+  visited: init_visited.map(row => [...row]),
+  visited_open: init_visited.map(row => [...row])
 };
 
 const runButtonReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case runButtonTypes.RUN_GAME:
       //const [neighbors, foundTarget] = BFS(state);
-      const [neighbors, foundTarget] = runSearchAlgorithm(state);
-      const currentCells = state.cells.concat(neighbors);
+      var openSet = [];
+      var closedSet = [];
+      var foundTarget = false;
+      var neighbors = [];
+      var currentCells = [];
+      var path = [];
+      const result = runSearchAlgorithm(state);
+      if (result.length > 2) {
+        [openSet, closedSet, foundTarget, path] = result;
+        currentCells = openSet.concat(closedSet);
+        neighbors = openSet.concat(closedSet);
+      } else {
+        [neighbors, foundTarget] = result;
+        currentCells = state.cells.concat(neighbors);
+      }
+      //const [neighbors, foundTarget] = runSearchAlgorithm(state);
+      //currentCells = state.cells.concat(neighbors);
       const { target } = state;
 
       var toBeReturned = {
@@ -62,6 +93,8 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         foundTarget: false,
         isAddingObstacles: false,
         searchAlgorithm: state.searchAlgorithm,
+        openSet: openSet,
+        closedSet: closedSet,
         path: state.path,
         cells: currentCells,
         visited: state.visited.map(row => [...row])
@@ -72,7 +105,9 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         if (foundTarget) {
           toBeReturned.foundTarget = true;
           var currentPath = generatePath(currentCells, target);
+
           toBeReturned.path = state.path.concat(currentPath);
+          if (result.length > 2) toBeReturned.path = path;
         }
       }
       return toBeReturned;
@@ -83,12 +118,12 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         isRunning: false
       };
     case runButtonTypes.CLEAR_GAME:
-      const tmp_fScore = init_fScore.map(row => [...row]);
-      tmp_fScore[START_Y][START_X] = dist(START_X, START_Y, state.target);
       return {
         ...state,
         isRunning: false,
         searchDone: false,
+        foundTarget: false,
+        searchAlgorithm: "BFS",
         cells: [
           {
             x: START_X,
@@ -96,10 +131,17 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
             from: "START"
           }
         ],
-        fScore: tmp_fScore,
+        fScore: init_fScore.map(row => [...row]),
         gScore: init_fScore.map(row => [...row]),
+        openSet: [{ x: START_X, y: START_Y, from: "START" }],
+        closedSet: [],
+        cameFrom: init_cameFrom.map(row => [...row]),
+        dijkstra_dist: init_dist.map(row => [...row]),
         path: init_path.map(cell => cell),
-        visited: init_visited.map(row => [...row])
+        isAddingObstacles: false,
+        obstacles: init_obstacles.map(row => [...row]),
+        visited: init_visited.map(row => [...row]),
+        visited_open: init_visited.map(row => [...row])
       };
     case runButtonTypes.DRAG_TARGET:
       var newx = action.payload.x;

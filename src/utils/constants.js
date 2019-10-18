@@ -8,7 +8,7 @@ const constants = {
   CELL_SIZE: 20,
   WIDTH: 800,
   HEIGHT: 500,
-  SEARCH_OPTIONS: ["BFS", "DFS", "A*"]
+  SEARCH_OPTIONS: ["BFS", "DFS", "A*", "Dijkstra"]
 };
 
 export default constants;
