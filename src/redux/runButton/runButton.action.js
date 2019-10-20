@@ -34,3 +34,12 @@ export const selectSearchAlgorithm = algorithm => ({
   type: runButtonTypes.SELECT_SEARCH_ALGORITHM,
   payload: algorithm
 });
+
+export const selectMazeAlgorithm = algorithm => ({
+  type: runButtonTypes.SELECT_MAZE_ALGORITHM,
+  payload: algorithm
+});
+
+export const generateMaze = () => ({
+  type: runButtonTypes.GENERATE_MAZE
+});

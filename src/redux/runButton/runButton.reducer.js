@@ -1,5 +1,10 @@
 import runButtonTypes from "./runButton.types";
-import { runSearchAlgorithm, generatePath, dist } from "../../utils/utils";
+import {
+  runSearchAlgorithm,
+  generatePath,
+  dist,
+  generateMaze
+} from "../../utils/utils";
 import constants from "../../utils/constants";
 
 const N_HORIZONTAL_CELLS = constants.N_HORIZONTAL_CELLS;
@@ -43,6 +48,7 @@ const INITIAL_STATE = {
   searchDone: false,
   foundTarget: false,
   searchAlgorithm: "BFS",
+  mazeAlgorithm: "Prim",
   cells: [
     {
       x: START_X,
@@ -187,6 +193,16 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         searchAlgorithm: action.payload
+      };
+    case runButtonTypes.SELECT_MAZE_ALGORITHM:
+      return {
+        ...state,
+        mazeAlgorithm: action.payload
+      };
+    case runButtonTypes.GENERATE_MAZE:
+      return {
+        ...state,
+        obstacles: generateMaze(state)
       };
     default:
       return state;

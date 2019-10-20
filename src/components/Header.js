@@ -8,11 +8,14 @@ import {
   toggleClearButton,
   toggleAddintObstacleState,
   clearObstacles,
-  selectSearchAlgorithm
+  selectSearchAlgorithm,
+  selectMazeAlgorithm,
+  generateMaze
 } from "../redux/runButton/runButton.action";
 import constants from "../utils/constants";
 
-const options = constants.SEARCH_OPTIONS;
+const search_options = constants.SEARCH_OPTIONS;
+const maze_options = constants.MAZE_OPTIONS;
 
 class Header extends React.Component {
   _onSelect(option) {
@@ -30,10 +33,17 @@ class Header extends React.Component {
           Visualizer
         </a>
         <Dropdown
-          options={options}
-          value={options[0]}
+          options={search_options}
+          value={search_options[0]}
           onChange={option => {
             this.props.dispatch(selectSearchAlgorithm(option.label));
+          }}
+        />
+        <Dropdown
+          options={maze_options}
+          value={maze_options[0]}
+          onChange={option => {
+            this.props.dispatch(selectMazeAlgorithm(option.label));
           }}
         />
         <button
@@ -67,6 +77,14 @@ class Header extends React.Component {
           }}
         >
           Clear Obstacles!
+        </button>
+        <button
+          className="ui primary button"
+          onClick={() => {
+            this.props.dispatch(generateMaze());
+          }}
+        >
+          Generate Maze!
         </button>
       </div>
     );

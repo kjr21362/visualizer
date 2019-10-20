@@ -289,3 +289,62 @@ export const generatePath = (cells, target) => {
   path.push({ x: START_X, y: START_Y, from: "START" });
   return path;
 };
+
+export const generateMaze = state => {
+  // https://github.com/professor-l/mazes/blob/master/scripts/prims.js
+  var width = N_VERTICAL_CELLS;
+  var height = N_HORIZONTAL_CELLS;
+  var obstacles = Array.from({ length: width }, () =>
+    Array.from({ length: height }, () => true)
+  );
+  var start = [];
+  do {
+    start[0] = Math.floor(Math.random() * width);
+  } while (start[0] % 2 == 0);
+  do {
+    start[1] = Math.floor(Math.random() * height);
+  } while (start[1] % 2 == 0);
+  obstacles[START_Y][START_X] = false;
+  var openCells = [start];
+
+  while (openCells.length) {
+    var index = Math.floor(Math.random() * openCells.length);
+    var cell = openCells[index];
+    var nei = getNeighbors(obstacles, cell[0], cell[1]);
+
+    while (nei.length == 0) {
+      openCells.splice(index, 1);
+      if (openCells.length == 0) break;
+      index = Math.floor(Math.random() * openCells.length);
+      cell = openCells[index];
+      nei = getNeighbors(obstacles, cell[0], cell[1]);
+    }
+    if (openCells.length == 0) break;
+
+    var choice = nei[Math.floor(Math.random() * nei.length)];
+    openCells.push(choice);
+    if (nei.length == 1) openCells.splice(index, 1);
+
+    obstacles[choice[0]][choice[1]] = false;
+    obstacles[(choice[0] + cell[0]) / 2][(choice[1] + cell[1]) / 2] = false;
+  }
+  obstacles[state.target.y][state.target.x] = false;
+  return obstacles;
+};
+
+const getNeighbors = (maze, ic, jc) => {
+  var res = [];
+  for (var i = 0; i < 4; i++) {
+    var nei = [ic, jc];
+    nei[i % 2] += Math.floor(i / 2) * 2 || -2;
+    if (
+      nei[0] < maze.length &&
+      nei[1] < maze[0].length &&
+      nei[0] >= 0 &&
+      nei[1] >= 0
+    ) {
+      if (maze[nei[0]][nei[1]] == true) res.push(nei);
+    }
+  }
+  return res;
+};
