@@ -4,6 +4,8 @@ import { BrowserRouter, Route } from "react-router-dom";
 import SearchPage from "./SearchPage";
 import SortPage from "./SortPage";
 import Directory from "../components/Directory/Directory";
+import constants from "../utils/constants";
+const APP_NAME = constants.APP_NAME;
 
 const App = () => {
   return (
@@ -11,9 +13,13 @@ const App = () => {
       <BrowserRouter>
         <div>
           <Header />
-          <Route path="/" exact component={Directory} />
-          <Route path="/search" exact component={SearchPage} />
-          <Route path="/sort" exact component={SortPage} />
+          <Route path={"/" + APP_NAME} exact component={Directory} />
+          <Route
+            path={"/" + APP_NAME + "/search"}
+            exact
+            component={SearchPage}
+          />
+          <Route path={"/" + APP_NAME + "/sort"} exact component={SortPage} />
         </div>
       </BrowserRouter>
     </div>

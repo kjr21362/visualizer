@@ -1,4 +1,5 @@
 const constants = {
+  APP_NAME: "visualizer",
   N_HORIZONTAL_CELLS: 41,
   N_VERTICAL_CELLS: 25,
   START_X: 4,
