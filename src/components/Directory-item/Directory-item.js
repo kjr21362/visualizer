@@ -7,7 +7,7 @@ const APP_NAME = constants.APP_NAME;
 const DirectoryItem = ({ title, imageUrl, size, history, linkUrl, match }) => (
   <div
     className={`${size} directory-item`}
-    onClick={() => history.push(APP_NAME + `${linkUrl}`)}
+    onClick={() => history.push(`${linkUrl}`)}
   >
     <div
       className="background-image"

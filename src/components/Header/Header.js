@@ -9,7 +9,7 @@ class Header extends React.Component {
     return (
       <div>
         <h1 className="ui header">
-          <Link to={"/" + APP_NAME} className="item">
+          <Link to="/" className="item">
             Visualizer
           </Link>
         </h1>
