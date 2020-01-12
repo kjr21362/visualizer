@@ -22,6 +22,40 @@ export const runSearchAlgorithm = state => {
   }
 };
 
+export const runSortAlgorithm = state => {
+  switch (state.sortAlgorithm) {
+    case "Bubblesort":
+      return bubbleSort(state);
+    case "Quicksort":
+      return quickSort(state);
+    default:
+      return [state.originalArray, state.originalArray.length];
+  }
+};
+
+const quickSort = state => {};
+
+const bubbleSort = state => {
+  var array = state.originalArray;
+  var idx = state.sortIndex;
+  if (idx >= array.length) {
+    return [array, idx];
+  }
+  var maxIndex = idx;
+  var maxValue = array[maxIndex];
+  for (var i = idx; i < array.length; i++) {
+    if (array[i] > maxValue) {
+      maxValue = array[i];
+      maxIndex = i;
+    }
+  }
+  var temp = array[idx];
+  array[idx] = maxValue;
+  array[maxIndex] = temp;
+
+  return [array, idx + 1];
+};
+
 export const dist = (x, y, target = { x: END_X, y: END_Y }) => {
   //return Math.sqrt(
   //  (x - target.x) * (x - target.x) + (y - target.y) * (y - target.y)
@@ -347,4 +381,15 @@ const getNeighbors = (maze, ic, jc) => {
     }
   }
   return res;
+};
+
+export const arrayToCells = array => {
+  var cells = [];
+  //var array = state.originalArray;
+  for (var x = 0; x < array.length; x++) {
+    for (var y = 0; y <= array[x]; y++) {
+      cells.push({ x: x, y: y });
+    }
+  }
+  return cells;
 };

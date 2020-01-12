@@ -1,45 +1,45 @@
-import runButtonTypes from "./runButton.types";
+import searchTypes from "./search.types";
 
 export const toggleRunButton = () => ({
-  type: runButtonTypes.RUN_GAME
+  type: searchTypes.RUN_SEARCH
 });
 
 export const toggleStopButton = () => ({
-  type: runButtonTypes.STOP_GAME
+  type: searchTypes.STOP_SEARCH
 });
 
 export const toggleClearButton = () => ({
-  type: runButtonTypes.CLEAR_GAME
+  type: searchTypes.CLEAR_SEARCH
 });
 
 export const dragTarget = newPos => ({
-  type: runButtonTypes.DRAG_TARGET,
+  type: searchTypes.DRAG_TARGET,
   payload: newPos
 });
 
 export const toggleAddintObstacleState = () => ({
-  type: runButtonTypes.TOGGLE_ADD_OBSTACLE
+  type: searchTypes.TOGGLE_ADD_OBSTACLE
 });
 
 export const addObstacle = newObstacle => ({
-  type: runButtonTypes.ADD_OBSTACLE,
+  type: searchTypes.ADD_OBSTACLE,
   payload: newObstacle
 });
 
 export const clearObstacles = () => ({
-  type: runButtonTypes.CLEAR_OBSTACLES
+  type: searchTypes.CLEAR_OBSTACLES
 });
 
 export const selectSearchAlgorithm = algorithm => ({
-  type: runButtonTypes.SELECT_SEARCH_ALGORITHM,
+  type: searchTypes.SELECT_SEARCH_ALGORITHM,
   payload: algorithm
 });
 
 export const selectMazeAlgorithm = algorithm => ({
-  type: runButtonTypes.SELECT_MAZE_ALGORITHM,
+  type: searchTypes.SELECT_MAZE_ALGORITHM,
   payload: algorithm
 });
 
 export const generateMaze = () => ({
-  type: runButtonTypes.GENERATE_MAZE
+  type: searchTypes.GENERATE_MAZE
 });

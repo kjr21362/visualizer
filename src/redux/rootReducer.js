@@ -1,9 +1,13 @@
 import { combineReducers } from "redux";
 
-import runButtonReducer from "./runButton/runButton.reducer";
+import directoryReducer from "../redux/directory/directory.reducer";
+import searchReducer from "../redux/search/search.reducer";
+import sortReducer from "../redux/sort/sort.reducer";
 
 const rootReducer = combineReducers({
-  runButton: runButtonReducer
+  directory: directoryReducer,
+  searchReducer: searchReducer,
+  sortReducer: sortReducer
 });
 
 export default rootReducer;

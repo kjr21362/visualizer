@@ -1,7 +1,7 @@
-const runButtonTypes = {
-  RUN_GAME: "RUN_GAME",
-  STOP_GAME: "STOP_GAME",
-  CLEAR_GAME: "CLEAR_GAME",
+const searchTypes = {
+  RUN_SEARCH: "RUN_SEARCH",
+  STOP_SEARCH: "STOP_SEARCH",
+  CLEAR_SEARCH: "CLEAR_SEARCH",
   DRAG_TARGET: "DRAG_TARGET",
   ADD_OBSTACLE: "ADD_OBSTACLE",
   TOGGLE_ADD_OBSTACLE: "TOGGLE_ADD_OBSTACLE",
@@ -11,4 +11,4 @@ const runButtonTypes = {
   GENERATE_MAZE: "GENERATE_MAZE"
 };
 
-export default runButtonTypes;
+export default searchTypes;

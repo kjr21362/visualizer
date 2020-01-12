@@ -1,6 +1,6 @@
 import React from "react";
 import "./Cell.css";
-import constants from "../utils/constants";
+import constants from "../../utils/constants";
 
 const CELL_SIZE = constants.CELL_SIZE;
 

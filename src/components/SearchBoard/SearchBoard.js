@@ -1,14 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import "./Board.css";
-import Cell from "./Cell";
+import "./SearchBoard.css";
+import Cell from "../Cell/Cell";
 import key from "weak-key";
-import constants from "../utils/constants";
+import constants from "../../utils/constants";
 import {
   dragTarget,
   addObstacle,
   toggleAddintObstacleState
-} from "../redux/runButton/runButton.action";
+} from "../../redux/search/search.action";
 
 const CELL_SIZE = constants.CELL_SIZE;
 const WIDTH = constants.WIDTH;
@@ -16,7 +16,7 @@ const HEIGHT = constants.HEIGHT;
 const START_X = constants.START_X;
 const START_Y = constants.START_Y;
 
-class Board extends React.Component {
+class SearchBoard extends React.Component {
   getBoardCoords = e => {
     var rect = this.boardRef.getBoundingClientRect();
     var doc = document.documentElement;
@@ -97,6 +97,7 @@ class Board extends React.Component {
             key="END_CELL"
           ></Cell>
         </div>
+
         {searchCells.length ? (
           searchCells.map(pathCell =>
             pathCell.x !== START_X || pathCell.y !== START_Y ? (
@@ -143,11 +144,11 @@ class Board extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  searchCells: state.runButton.cells,
-  path: state.runButton.path,
-  target: state.runButton.target,
-  obstacles: state.runButton.obstacles,
-  isAddingObstacles: state.runButton.isAddingObstacles
+  searchCells: state.searchReducer.cells,
+  path: state.searchReducer.path,
+  target: state.searchReducer.target,
+  obstacles: state.searchReducer.obstacles,
+  isAddingObstacles: state.searchReducer.isAddingObstacles
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -156,7 +157,4 @@ const mapDispatchToProps = dispatch => ({
   toggleAddintObstacleState: () => dispatch(toggleAddintObstacleState())
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Board);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBoard);

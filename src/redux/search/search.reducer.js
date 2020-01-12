@@ -1,4 +1,4 @@
-import runButtonTypes from "./runButton.types";
+import searchTypes from "./search.types";
 import {
   runSearchAlgorithm,
   generatePath,
@@ -47,15 +47,9 @@ const INITIAL_STATE = {
   isRunning: false,
   searchDone: false,
   foundTarget: false,
-  searchAlgorithm: "BFS",
+  searchAlgorithm: "",
   mazeAlgorithm: "Prim",
-  cells: [
-    {
-      x: START_X,
-      y: START_Y,
-      from: "START"
-    }
-  ],
+  cells: [],
   fScore: init_fScore.map(row => [...row]),
   gScore: init_fScore.map(row => [...row]),
   openSet: [{ x: START_X, y: START_Y, from: "START" }],
@@ -69,10 +63,9 @@ const INITIAL_STATE = {
   visited_open: init_visited.map(row => [...row])
 };
 
-const runButtonReducer = (state = INITIAL_STATE, action) => {
+const searchReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case runButtonTypes.RUN_GAME:
-      //const [neighbors, foundTarget] = BFS(state);
+    case searchTypes.RUN_SEARCH:
       var openSet = [];
       var closedSet = [];
       var foundTarget = false;
@@ -118,18 +111,19 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
       }
       return toBeReturned;
 
-    case runButtonTypes.STOP_GAME:
+    case searchTypes.STOP_SEARCH:
       return {
         ...state,
         isRunning: false
       };
-    case runButtonTypes.CLEAR_GAME:
+    case searchTypes.CLEAR_SEARCH:
       return {
         ...state,
         isRunning: false,
         searchDone: false,
         foundTarget: false,
-        searchAlgorithm: "BFS",
+        //searchAlgorithm: "",
+        //sortAlgorithm: "",
         cells: [
           {
             x: START_X,
@@ -149,7 +143,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         visited: init_visited.map(row => [...row]),
         visited_open: init_visited.map(row => [...row])
       };
-    case runButtonTypes.DRAG_TARGET:
+    case searchTypes.DRAG_TARGET:
       var newx = action.payload.x;
       var newy = action.payload.y;
       if (newx < 0) newx = 0;
@@ -160,7 +154,7 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         ...state,
         target: { x: newx, y: newy }
       };
-    case runButtonTypes.ADD_OBSTACLE:
+    case searchTypes.ADD_OBSTACLE:
       var newx = action.payload.x;
       var newy = action.payload.y;
       if (
@@ -179,27 +173,34 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
         }
         return state;
       }
-    case runButtonTypes.TOGGLE_ADD_OBSTACLE:
+    case searchTypes.TOGGLE_ADD_OBSTACLE:
       return {
         ...state,
         isAddingObstacles: !state.isAddingObstacles
       };
-    case runButtonTypes.CLEAR_OBSTACLES:
+    case searchTypes.CLEAR_OBSTACLES:
       return {
         ...state,
         obstacles: init_obstacles.map(row => [...row])
       };
-    case runButtonTypes.SELECT_SEARCH_ALGORITHM:
+    case searchTypes.SELECT_SEARCH_ALGORITHM:
       return {
         ...state,
+        cells: [
+          {
+            x: START_X,
+            y: START_Y,
+            from: "START"
+          }
+        ],
         searchAlgorithm: action.payload
       };
-    case runButtonTypes.SELECT_MAZE_ALGORITHM:
+    case searchTypes.SELECT_MAZE_ALGORITHM:
       return {
         ...state,
         mazeAlgorithm: action.payload
       };
-    case runButtonTypes.GENERATE_MAZE:
+    case searchTypes.GENERATE_MAZE:
       return {
         ...state,
         obstacles: generateMaze(state)
@@ -209,4 +210,4 @@ const runButtonReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-export default runButtonReducer;
+export default searchReducer;

@@ -2,7 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import { startTimer, stopTimer } from "../redux/timer/timer.actions";
+import "./SearchHeader.css";
+import {
+  startTimerForAction,
+  stopTimerForAction
+} from "../../redux/timer/timer.actions";
 import {
   toggleStopButton,
   toggleClearButton,
@@ -11,13 +15,13 @@ import {
   selectSearchAlgorithm,
   selectMazeAlgorithm,
   generateMaze
-} from "../redux/runButton/runButton.action";
-import constants from "../utils/constants";
+} from "../../redux/search/search.action";
+import constants from "../../utils/constants";
 
 const search_options = constants.SEARCH_OPTIONS;
 const maze_options = constants.MAZE_OPTIONS;
 
-class Header extends React.Component {
+class SearchHeader extends React.Component {
   _onSelect(option) {
     //console.log(option.label);
     this.props.dispatch(selectSearchAlgorithm(option.label));
@@ -29,9 +33,6 @@ class Header extends React.Component {
     }
     return (
       <div className="ui secondary pointing menu">
-        <a href="/" className="item">
-          Visualizer
-        </a>
         <Dropdown
           options={search_options}
           value={search_options[0]}
@@ -46,14 +47,18 @@ class Header extends React.Component {
             this.props.dispatch(selectMazeAlgorithm(option.label));
           }}
         />
+
         <button
           className="ui primary button"
           onClick={() => {
-            isRunning ? dispatchWhenStop(this.props) : dispatch(startTimer());
+            isRunning
+              ? dispatchWhenStop(this.props)
+              : startTimerForAction(this.props.dispatch, constants.SEARCH);
           }}
         >
           {isRunning ? "Stop!" : "Run!"}
         </button>
+
         <button
           className="ui primary button"
           onClick={() => {
@@ -62,6 +67,7 @@ class Header extends React.Component {
         >
           Clear!
         </button>
+
         <button
           className="ui primary button"
           onClick={() => {
@@ -70,6 +76,7 @@ class Header extends React.Component {
         >
           {isAddingObstacles ? "Drag to add obstacles!" : "Add Obstacles!"}
         </button>
+
         <button
           className="ui primary button"
           onClick={() => {
@@ -78,6 +85,7 @@ class Header extends React.Component {
         >
           Clear Obstacles!
         </button>
+
         <button
           className="ui primary button"
           onClick={() => {
@@ -92,19 +100,21 @@ class Header extends React.Component {
 }
 
 const dispatchWhenClear = props => {
-  props.dispatch(stopTimer());
+  //props.dispatch(stopTimer());
+  stopTimerForAction(props.dispatch, constants.SEARCH);
   props.dispatch(toggleClearButton());
 };
 
 const dispatchWhenStop = props => {
-  props.dispatch(stopTimer());
+  //props.dispatch(stopTimer());
+  stopTimerForAction(props.dispatch, constants.SEARCH);
   props.dispatch(toggleStopButton());
 };
 
 const mapStateToProps = state => ({
-  isRunning: state.runButton.isRunning,
-  searchDone: state.runButton.searchDone,
-  isAddingObstacles: state.runButton.isAddingObstacles
+  isRunning: state.searchReducer.isRunning,
+  searchDone: state.searchReducer.searchDone,
+  isAddingObstacles: state.searchReducer.isAddingObstacles
 });
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps)(SearchHeader);
