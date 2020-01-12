@@ -49,7 +49,13 @@ const INITIAL_STATE = {
   foundTarget: false,
   searchAlgorithm: "",
   mazeAlgorithm: "Prim",
-  cells: [],
+  cells: [
+    {
+      x: START_X,
+      y: START_Y,
+      from: "START"
+    }
+  ],
   fScore: init_fScore.map(row => [...row]),
   gScore: init_fScore.map(row => [...row]),
   openSet: [{ x: START_X, y: START_Y, from: "START" }],
@@ -186,6 +192,7 @@ const searchReducer = (state = INITIAL_STATE, action) => {
     case searchTypes.SELECT_SEARCH_ALGORITHM:
       return {
         ...state,
+        searchDone: false,
         cells: [
           {
             x: START_X,
