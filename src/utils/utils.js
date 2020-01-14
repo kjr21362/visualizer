@@ -28,12 +28,166 @@ export const runSortAlgorithm = state => {
       return bubbleSort(state);
     case "Quicksort":
       return quickSort(state);
+    case "Mergesort":
+      return mergeSort(state);
+    case "Insertionsort":
+      return insertionSort(state);
     default:
       return [state.originalArray, state.originalArray.length];
   }
 };
 
-const quickSort = state => {};
+const insertionSort = state => {
+  if (state.insertionSort_savedState.length == 0) {
+    return [state.originalArray, state.originalArray.length];
+  }
+  var savedState = state.insertionSort_savedState.shift();
+  var saved_i = savedState[0];
+  var saved_j = savedState[1];
+  var array = state.originalArray;
+
+  if (saved_j > 0 && array[saved_j - 1] > array[saved_j]) {
+    var tmp = array[saved_j - 1];
+    array[saved_j - 1] = array[saved_j];
+    array[saved_j] = tmp;
+    state.insertionSort_savedState.unshift([saved_i, saved_j - 1]);
+  } else if (saved_i + 1 < state.originalArray.length) {
+    state.insertionSort_savedState.unshift([saved_i + 1, saved_i + 1]);
+  }
+  return [array, 0];
+};
+
+const mergeSort = state => {
+  if (state.mergeSort_savedState.length == 0) {
+    return [state.originalArray, state.originalArray.length];
+  }
+  var lo = 0;
+  var hi = state.originalArray.length - 1;
+
+  var array = state.originalArray;
+  var savedState = state.mergeSort_savedState.shift();
+  var saved_m = savedState[0];
+  var saved_i = savedState[1];
+
+  var from = saved_i;
+  var mid = saved_i + saved_m - 1;
+  var to = Math.min(saved_i + 2 * saved_m - 1, hi);
+  var newArray = merge(array, from, mid, to);
+
+  for (var i = from; i <= to; i++) {
+    array[i] = newArray[i - from];
+  }
+
+  if (saved_i + 2 * saved_m < hi) {
+    state.mergeSort_savedState.unshift([saved_m, saved_i + 2 * saved_m]);
+  } else if (2 * saved_m <= hi - lo) {
+    state.mergeSort_savedState.unshift([2 * saved_m, lo]);
+  }
+
+  return [array, 0];
+};
+
+const merge = (array, low, mid, high) => {
+  var newArray = new Array(high - low + 1);
+  var i = low;
+  var j = mid + 1;
+  var k = 0;
+
+  while (i <= mid && j <= high) {
+    if (array[i] <= array[j]) {
+      newArray[k] = array[i];
+      i++;
+      k++;
+    } else {
+      newArray[k] = array[j];
+      j++;
+      k++;
+    }
+  }
+  while (i <= mid) {
+    newArray[k] = array[i];
+    i++;
+    k++;
+  }
+  while (j <= high) {
+    newArray[k] = array[j];
+    j++;
+    k++;
+  }
+
+  return newArray;
+};
+
+const quickSort = state => {
+  if (state.quickSortIndexes.length == 0) {
+    return [state.originalArray, state.originalArray.length];
+  }
+  const idxes = state.quickSortIndexes.shift();
+  var low = idxes[0];
+  var high = idxes[1];
+  var saved_pIdx = idxes[2];
+  var savedPivot = state.originalArray[saved_pIdx];
+  var saved_i = idxes[3];
+  var saved_j = idxes[4];
+
+  if (low >= high) {
+    return [state.originalArray, 0];
+  }
+
+  var array = state.originalArray;
+  //const p = partition(state.originalArray, low, high);
+  if (saved_j < high) {
+    if (array[saved_j] < savedPivot) {
+      const tmp = array[saved_j];
+      array[saved_j] = array[saved_i];
+      array[saved_i] = tmp;
+      saved_i++;
+    }
+  }
+  saved_j++;
+
+  state.quickSort_pivotCol = saved_pIdx;
+  state.quickSort_lowCol = saved_i;
+  state.quickSort_movingCol = saved_j;
+
+  if (saved_j >= high) {
+    const tmp = array[high];
+    array[high] = array[saved_i];
+    array[saved_i] = tmp;
+
+    state.quickSortIndexes.unshift([
+      saved_i + 1,
+      high,
+      high,
+      saved_i + 1,
+      saved_i + 1
+    ]);
+    state.quickSortIndexes.unshift([low, saved_i - 1, saved_i - 1, low, low]);
+  } else {
+    state.quickSortIndexes.unshift([low, high, saved_pIdx, saved_i, saved_j]);
+  }
+
+  //state.quickSortIndexes.unshift([p + 1, high]);
+  //state.quickSortIndexes.unshift([low, p - 1]);
+  return [state.originalArray, 0];
+};
+
+const partition = (array, lo, hi) => {
+  const pivot = array[hi];
+  var i = lo;
+  for (var j = lo; j <= hi; j++) {
+    if (array[j] < pivot) {
+      const tmp = array[j];
+      array[j] = array[i];
+      array[i] = tmp;
+      i++;
+    }
+  }
+  const tmp = array[hi];
+  array[hi] = array[i];
+  array[i] = tmp;
+  return i;
+};
 
 const bubbleSort = state => {
   var array = state.originalArray;
@@ -57,9 +211,6 @@ const bubbleSort = state => {
 };
 
 export const dist = (x, y, target = { x: END_X, y: END_Y }) => {
-  //return Math.sqrt(
-  //  (x - target.x) * (x - target.x) + (y - target.y) * (y - target.y)
-  //);
   return Math.abs(x - target.x) + Math.abs(y - target.y);
 };
 

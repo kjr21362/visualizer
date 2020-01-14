@@ -11,7 +11,13 @@ const constants = {
   HEIGHT: 500,
   SEARCH_OPTIONS: ["Search Algorithm", "BFS", "DFS", "A*", "Dijkstra"],
   MAZE_OPTIONS: ["Prim"],
-  SORT_OPTIONS: ["Sort Algorithm", "Bubblesort", "Quicksort"],
+  SORT_OPTIONS: [
+    "Sort Algorithm",
+    "Bubblesort",
+    "Quicksort",
+    "Mergesort",
+    "Insertionsort"
+  ],
   SEARCH: 0,
   SORT: 1,
   NO_ALGORITHM_SELECTED: -1

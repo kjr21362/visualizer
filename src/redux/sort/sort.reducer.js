@@ -4,6 +4,10 @@ import constants from "../../utils/constants";
 
 const N_HORIZONTAL_CELLS = constants.N_HORIZONTAL_CELLS;
 const N_VERTICAL_CELLS = constants.N_VERTICAL_CELLS;
+var mergeSort_idxes = [];
+for (var i = 0; i < N_HORIZONTAL_CELLS; i++) {
+  mergeSort_idxes.push([i, i]);
+}
 
 const INITIAL_STATE = {
   isRunning: false,
@@ -13,7 +17,13 @@ const INITIAL_STATE = {
   originalArray: Array.from({ length: N_HORIZONTAL_CELLS }, () =>
     Math.floor(Math.random() * N_VERTICAL_CELLS)
   ),
-  sortIndex: 0
+  sortIndex: 0,
+  quickSortIndexes: [[0, N_HORIZONTAL_CELLS - 1, N_HORIZONTAL_CELLS - 1, 0, 0]],
+  quickSort_pivotCol: N_HORIZONTAL_CELLS - 1,
+  quickSort_lowCol: 0,
+  quickSort_movingCol: 0,
+  mergeSort_savedState: [[1, 0]],
+  insertionSort_savedState: [[1, 1]]
 };
 
 const sortReducer = (state = INITIAL_STATE, action) => {
@@ -56,7 +66,15 @@ const sortReducer = (state = INITIAL_STATE, action) => {
         searchDone: true,
         sortIndex: 0,
         originalArray: array,
-        cells: nextCells
+        cells: nextCells,
+        quickSortIndexes: [
+          [0, N_HORIZONTAL_CELLS - 1, N_HORIZONTAL_CELLS - 1, 0, 0]
+        ],
+        quickSort_pivotCol: N_HORIZONTAL_CELLS - 1,
+        quickSort_lowCol: 0,
+        quickSort_movingCol: 0,
+        mergeSort_savedState: [[1, 0]],
+        insertionSort_savedState: [[1, 1]]
       };
 
     case sortTypes.SELECT_SORT_ALGORITHM:
@@ -66,7 +84,15 @@ const sortReducer = (state = INITIAL_STATE, action) => {
         ...state,
         cells: arrayCells,
         sortAlgorithm: action.payload,
-        sortIndex: 0
+        sortIndex: 0,
+        quickSortIndexes: [
+          [0, N_HORIZONTAL_CELLS - 1, N_HORIZONTAL_CELLS - 1, 0, 0]
+        ],
+        quickSort_pivotCol: N_HORIZONTAL_CELLS - 1,
+        quickSort_lowCol: 0,
+        quickSort_movingCol: 0,
+        mergeSort_savedState: [[1, 0]],
+        insertionSort_savedState: [[1, 1]]
       };
     default:
       return state;

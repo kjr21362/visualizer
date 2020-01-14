@@ -31,13 +31,13 @@ class SortBoard extends React.Component {
 
   render() {
     const {
-      searchCells,
-      path,
-      target,
-      obstacles,
+      cells,
       toggleAddintObstacleState,
       isAddingObstacles,
-      currentAlgorithm
+      quickSort_pivotCol,
+      quickSort_lowCol,
+      quickSort_movingCol,
+      sortAlgorithm
     } = this.props;
 
     return (
@@ -65,12 +65,23 @@ class SortBoard extends React.Component {
           backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`
         }}
       >
-        {searchCells.length ? (
-          searchCells.map(pathCell => (
+        {cells.length ? (
+          cells.map(pathCell => (
             <Cell
               x={pathCell.x * CELL_SIZE}
               y={pathCell.y * CELL_SIZE}
               key={key(pathCell)}
+              color={
+                sortAlgorithm == "Quicksort"
+                  ? pathCell.x == quickSort_lowCol
+                    ? "blue"
+                    : pathCell.x == quickSort_movingCol
+                    ? "green"
+                    : pathCell.x == quickSort_pivotCol
+                    ? "red"
+                    : "gray"
+                  : "gray"
+              }
             />
           ))
         ) : (
@@ -82,7 +93,11 @@ class SortBoard extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  searchCells: state.sortReducer.cells
+  cells: state.sortReducer.cells,
+  sortAlgorithm: state.sortReducer.sortAlgorithm,
+  quickSort_pivotCol: state.sortReducer.quickSort_pivotCol,
+  quickSort_lowCol: state.sortReducer.quickSort_lowCol,
+  quickSort_movingCol: state.sortReducer.quickSort_movingCol
 });
 
 const mapDispatchToProps = dispatch => ({});
